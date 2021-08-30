@@ -4,6 +4,8 @@ from validate_docbr import CPF
 from criartabelas import criarTabelas
 cpf = CPF()
 
+
+
 def pegarId(linha):
     for x in linha:
                 print(x)
@@ -218,10 +220,15 @@ while menu != "5":
                 linha = conectarnobanco(texto,host,user,password,0)
                 print(linha)
 
-                texto = """SELECT NomeAcademia,quantidadeAlunos
-FROM academia.CADASTRO_PERSONAL
-INNER JOIN academia.ACADEMIA 
-ON CADASTRO_PERSONAL.id_ACADEMIA = ACADEMIA.id_ACADEMIA
+                texto = """
+SELECT Nome_Pessoa,NomeAcademia,Comprovante,Formacao 
+FROM academia.CADASTRO_PERSONAL 
+INNER JOIN academia.ACADEMIA
+INNER JOIN academia.Pessoa
+ON id_ACADEMIA = ACADEMIA.id_ACADEMIA
+ON CADASTRO_PERSONAL.CPF = Pessoa.CPF
+
+
 """
                 linha = conectarnobanco(texto,host,user,password,0)
                 print(linha)
