@@ -172,7 +172,7 @@ while menu != "5":
                     cpf_aluno = input("Digite o cpf do pessoa: ")
 
                 nome_aluno = input("Digite o nome do pessoa: ")
-                data_aluno = input("Digite a data de nascimento do pessoa: ")
+                data_aluno = input("Digite a data de nascimento do pessoa(formato: AAAA-MM-DD): ")
                 celular_aluno = input("Digite o  numero de celular do pessoa: ")
                 tipo_sanguineo_aluno = input("Digite o tipo sanguineo do pessoa: ")
 
@@ -193,7 +193,7 @@ while menu != "5":
                 iddaacademia = pegarId(linha)
 
 
-                escolha = input("Aluno ou personal?")
+                escolha = input("Aluno ou personal? 1 para aluno e 2 para Personal")
                 if escolha == "1":
                     texto = "INSERT INTO CADASTRO_ALUNO (Comprovante,ID_GROUP,CPF) Values ('{}',{},'{}')".format("FEITO",iddogrupo,cpf_aluno)
                     print(texto)
@@ -221,6 +221,9 @@ while menu != "5":
                 print(linha)
 
                 texto = """
+            
+
+
 SELECT Nome_Pessoa,NomeAcademia,Comprovante,Formacao 
 FROM academia.CADASTRO_PERSONAL 
 INNER JOIN academia.ACADEMIA
@@ -232,7 +235,42 @@ ON CADASTRO_PERSONAL.CPF = Pessoa.CPF
 """
                 linha = conectarnobanco(texto,host,user,password,0)
                 print(linha)
+        if menu == "4":
+            print("Painel do Personal Trainer" + "-" * 10 )
+            cpf_personal = input("Digite aqui o seu cpf aqui")
+            print("verificando seu usuario...")
 
+
+
+
+
+            opcao_personal = input("O que você quer fazer? \n1- Criar uma lista de exercicio 2-Editar uma")
+            texto = "SELECT id_ACADEMIA FROM academia.CADASTRO_PERSONAL where CPF = {}".format(cpf_personal) 
+            linha = conectarnobanco(texto,host,user,password,0)
+            id_academia = pegarId(linha)
+            #print(linha)
+
+            texto = "SELECT ID_GROUP FROM academia.ACADEMIA where id_ACADEMIA = {}".format(id_academia) 
+            linha = conectarnobanco(texto,host,user,password,0)
+            id_grupo = pegarId(linha)
+
+            #print(linha)
+
+
+            print(" id do grupo: " + str(id_grupo))
+            print(" id do academia: " + str(id_academia))
+
+            if opcao_personal == "1":
+                descricao = input("digite a descrição dos exercicios: ")
+                texto = "INSERT INTO LISTA_EXERCICIOS (DescricaoExercicios,CPF,ID_GROUP) Values ('{}','{}',{})".format(descricao,cpf_personal,id_grupo)
+
+
+
+
+
+
+
+        
 
 
 

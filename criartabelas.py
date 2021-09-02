@@ -150,11 +150,14 @@ def criarTabelas(host,user,password):
     CREATE TABLE LISTA_EXERCICIOS (
         ID int NOT NULL AUTO_INCREMENT,
       DescricaoExercicios varchar(255),
-      CPF VARCHAR(11),
+      CPF_ALUNO VARCHAR(11),
+      CPF_PERSONAL VARCHAR(11),
           ID_GROUP int,
         PRIMARY KEY (ID),
         FOREIGN KEY (ID_GROUP) REFERENCES GRUPO(ID_GROUP),
-        FOREIGN KEY (CPF) REFERENCES Pessoa(CPF)
+        FOREIGN KEY (CPF_ALUNO) REFERENCES Pessoa(CPF),
+        FOREIGN KEY (CPF_PERSONAL) REFERENCES Pessoa(CPF)
+
 
     );
     """
@@ -179,6 +182,24 @@ def criarTabelas(host,user,password):
     """
     textos.append(texto)
 
+
+texto = """
+    CREATE TABLE EXERCICIOS (
+        ID_EXERCICIOS int NOT NULL AUTO_INCREMENT,
+      Nome varchar(50),
+        Serie char(1) CHECK (Serie IN ('1', '2', '3', '4') ),
+          Repeticao int,
+      Tipo varchar(50),
+            Intervalo int,
+            ID int,
+
+        PRIMARY KEY (ID_EXERCICIOS),
+    
+        FOREIGN KEY (ID) REFERENCES LISTA_EXERCICIOS(ID)
+
+    );
+    """
+    textos.append(texto)
     for texto in textos:
         print(texto)
         try:
