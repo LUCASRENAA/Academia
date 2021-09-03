@@ -168,34 +168,29 @@ def criarTabelas(host,user,password):
     CREATE TABLE EXERCICIOS (
         ID_EXERCICIOS int NOT NULL AUTO_INCREMENT,
       Nome varchar(50),
-        Serie char(1) CHECK (Serie IN ('1', '2', '3', '4') ),
-          Repeticao int,
+        
       Tipo varchar(50),
-            Intervalo int,
-            ID int,
-
-        PRIMARY KEY (ID_EXERCICIOS),
-    
-        FOREIGN KEY (ID) REFERENCES LISTA_EXERCICIOS(ID)
-
+           
+        PRIMARY KEY (ID_EXERCICIOS)
     );
     """
     textos.append(texto)
 
 
-texto = """
-    CREATE TABLE EXERCICIOS (
-        ID_EXERCICIOS int NOT NULL AUTO_INCREMENT,
-      Nome varchar(50),
+    texto = """
+    CREATE TABLE EXERCICIOS_LIGACAO (
+        ID_EXERCICIOS_LIGACAO int NOT NULL AUTO_INCREMENT,
+
         Serie char(1) CHECK (Serie IN ('1', '2', '3', '4') ),
           Repeticao int,
-      Tipo varchar(50),
-            Intervalo int,
-            ID int,
+           Intervalo int,
 
-        PRIMARY KEY (ID_EXERCICIOS),
-    
-        FOREIGN KEY (ID) REFERENCES LISTA_EXERCICIOS(ID)
+        ID int,
+        ID_EXERCICIOS int,
+        PRIMARY KEY (ID_EXERCICIOS_LIGACAO),
+        FOREIGN KEY (ID) REFERENCES LISTA_EXERCICIOS(ID),
+        FOREIGN KEY (ID_EXERCICIOS) REFERENCES EXERCICIOS(ID_EXERCICIOS)
+
 
     );
     """

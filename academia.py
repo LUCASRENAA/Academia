@@ -262,7 +262,49 @@ ON CADASTRO_PERSONAL.CPF = Pessoa.CPF
 
             if opcao_personal == "1":
                 descricao = input("digite a descrição dos exercicios: ")
-                texto = "INSERT INTO LISTA_EXERCICIOS (DescricaoExercicios,CPF,ID_GROUP) Values ('{}','{}',{})".format(descricao,cpf_personal,id_grupo)
+                cpf_aluno = input("cpf aluno: ")
+
+                texto = "INSERT INTO LISTA_EXERCICIOS (DescricaoExercicios,CPF_PERSONAL,ID_GROUP,CPF_ALUNO) Values ('{}','{}',{},'{}')".format(descricao,cpf_personal,id_grupo,cpf_aluno)
+                conectarnobanco(texto,host,user,password,1)
+
+                opcao_exercicio = "0"
+                while opcao_exercicio != "4":
+                    opcao_exercicio = input("1- criar exercicio\n2- escolher\n3-adicionar numa lista\n4-sair")
+                    
+                    if opcao_exercicio == "1":
+                        print("alo")
+                        nome_Exercicio = input("Nome do exercicio: ")
+                        tipo_Exercicio = input("Tipo do exercicio: ")
+
+                        texto = "INSERT INTO EXERCICIOS (Nome,Tipo) Values ('{}','{}')".format(nome_Exercicio,tipo_Exercicio)
+                        conectarnobanco(texto,host,user,password,1)
+
+                    if opcao_exercicio == "2":
+                        texto = "SELECT  * FROM EXERCICIOS"
+                        linha = conectarnobanco(texto,host,user,password,0)
+                        print(linha)
+
+                    if opcao_exercicio == "3":
+
+                        serie = input("serie: ")
+                        repeticao = input("repeticao: ")
+                        intervalo = input("intervalo: ")
+
+                        texto = "SELECT ID FROM academia.LISTA_EXERCICIOS WHERE  CPF_ALUNO = '" + str(cpf_aluno) + "'"
+                        linha = conectarnobanco(texto,host,user,password,0)
+                        print("Academia está aqui: " + str(linha))
+                        id_lista = pegarId(linha)
+                        nome_exercicio = input("nome exercicio: ")
+
+
+                        texto = "SELECT ID_EXERCICIOS FROM academia.EXERCICIOS WHERE  Nome = '" + str(nome_exercicio) + "'"
+                        linha = conectarnobanco(texto,host,user,password,0)
+                        print("Academia está aqui: " + str(linha))
+                        id_exercicio = pegarId(linha)
+
+
+                        texto = "INSERT INTO EXERCICIOS_LIGACAO (Serie,Repeticao,Intervalo,ID,ID_EXERCICIOS) Values ('{}',{},{},{},{})".format(serie,repeticao,intervalo,id_lista,id_exercicio)
+                        conectarnobanco(texto,host,user,password,1)
 
 
 
