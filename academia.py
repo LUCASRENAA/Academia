@@ -2,12 +2,9 @@ import mysql.connector
 import getpass
 from validate_docbr import CPF
 from criartabelas import criarTabelas
-<<<<<<< HEAD
 from testes import gerarDados
 from automatica import testesAutomatico
 from conexao import conectarnobanco
-=======
->>>>>>> parent of 03bb4c0 (acrescentando dados falsos)
 cpf = CPF()
 
 from datetime import datetime, timedelta, timezone
@@ -24,26 +21,7 @@ def pegarId(linha):
                 for y in x:
                     iddogrupo = y 
     return iddogrupo
-    
-def conectarnobanco(texto,host,user,password,opcao):
-    con = mysql.connector.connect(host=host,database='academia',user=user,password=password)
-    if con.is_connected():
-        db_info = con.get_server_info()
-        print("Conectado ao servidor MySQL versão ",db_info)
-        cursor = con.cursor()
-        
-        cursor.execute(texto)
-        #linha = cursor.fetchone()
-        linha=  cursor.fetchall()
-        #print("Conectado ao banco de dados ",linha)
-    if opcao == 1:
-        con.commit()
-    if con.is_connected():
-        cursor.close()
-        con.close()
-        
-        print("Conexão ao MySQL foi encerrada")
-    return linha
+
 
 print("-" * 30 + str("SISTEMA DE ACADEMIA DO SEU ZÉ") + "-" * 30) 
 
@@ -67,13 +45,13 @@ password = getpass.getpass("Digite sua senha: ")
 
 menu = ""
 while menu != "5":
-    menu = input("""Digite a opção do menu\n
+    menu = input("""\n\n\nDigite a opção do menu\n
 0- Gerar Dados\n
 1- Criação do banco(Criar banco e tabelas)\n
 2- Administrativo (Criar Academias,Grupos e ver esses grupos)\n
 3- Atendente(Organizar a fila de espera e verificar se o aluno é da academia\n
 4- Personal trainer(Criar listas de exercicios)\n
-5- Sair\n""")
+5- Sair\n\nSua opção: """)
 
     if menu == "5":
         print("OPS SAINDO")
@@ -95,10 +73,10 @@ while menu != "5":
         if menu == "2":
 
             print("1-Criar Grupo")
-            print("2- Criar Academia")
+            print("2-Criar Academia")
             print("3-Ver Grupos")
-            print("4- Ver Academias")
-            opcao = int(input())
+            print("4-Ver Academias")
+            opcao = int(input("\n\nSua opção: "))
 
             if opcao == 1:
 
@@ -107,7 +85,6 @@ while menu != "5":
             
             
 
-                print(texto)
                 conectarnobanco(texto,host,user,password,1)
                 
             
@@ -129,7 +106,6 @@ while menu != "5":
             
             
 
-                print(texto)
                 conectarnobanco(texto,host,user,password,1)
 
 
@@ -150,7 +126,8 @@ while menu != "5":
             if opcao == 3:
                 texto = "SELECT * FROM academia.GRUPO"
                 linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
+                for grupo in linha:
+                    print("\nId: {}\nNome do grupo: {}".format(grupo[0],grupo[1]))
 
                 
                     
@@ -159,8 +136,8 @@ while menu != "5":
                 texto = "SELECT * FROM academia.ACADEMIA"
                 linha = conectarnobanco(texto,host,user,password,0)
 
-                for x in linha:
-                    print(x)
+                for academia_linha in linha:
+                    print("\n\n\nID: {}\nAcademia: {}".format(academia_linha[0],academia_linha[2]))
 
 
 
@@ -170,205 +147,198 @@ while menu != "5":
 
         if menu == "3":
             academia  = input("Digite o nome da sua academia: ")
+            continuar = 'S'
+            while continuar == 'S':
 
-            vetoracademia = []
-            print("Verificando a existencia dessa academia")
-            texto = "SELECT * FROM academia.ACADEMIA"
-            linha = conectarnobanco(texto,host,user,password,0)
-            for i in linha:
-                    print(i)
-                    if i[2] == academia:
-                        vetoracademia = i
-            if vetoracademia != []:
-                print("Academia existe :D")
-                print(i[2])
-                print(i[0])
-            else:
-                print("Academia não existe")
-                
-            
-
-
-
-
-            print("O que você deseja fazer?")
-            print("1- Cadastrar Pessoa ou Personal")
-            print("2- Ver Pessoas")
-            print("3- Organizar a fila")
-     
-
-    
-            escolher = input("O que você deseja fazer?")
-            if escolher == "1":
-                cpf_aluno = input("Digite o cpf da pessoa: ")
-                while cpf.validate(cpf_aluno) == False:
-                    print("Opa, digita o CPF certinho ai amigão :D")
-                    cpf_aluno = input("Digite o cpf do pessoa: ")
-
-                nome_aluno = input("Digite o nome do pessoa: ")
-                data_aluno = input("Digite a data de nascimento do pessoa(formato: AAAA-MM-DD): ")
-                celular_aluno = input("Digite o  numero de celular do pessoa: ")
-                tipo_sanguineo_aluno = input("Digite o tipo sanguineo do pessoa: ")
-
-                texto = "INSERT INTO Pessoa (CPF,Nome_Pessoa,Data_Nascimento,Numero_Celular,Tipo_Sanguineo) Values ('{}','{}','{}','{}','{}')".format(cpf_aluno,nome_aluno,data_aluno,celular_aluno,tipo_sanguineo_aluno)
-        
-                print(texto)
-                conectarnobanco(texto,host,user,password,1)
-
-
-
-                texto = "SELECT ID_GROUP FROM academia.ACADEMIA WHERE  NomeAcademia = '" + str(academia) + "'"
+                vetoracademia = []
+                print("Verificando a existencia dessa academia")
+                texto = "SELECT * FROM academia.ACADEMIA"
                 linha = conectarnobanco(texto,host,user,password,0)
-                iddogrupo = pegarId(linha)
-
-
-                texto = "SELECT id_ACADEMIA FROM academia.ACADEMIA WHERE  NomeAcademia = '" + str(academia) + "'"
-                linha = conectarnobanco(texto,host,user,password,0)
-                iddaacademia = pegarId(linha)
-
-
-                escolha = input("Aluno ou personal? 1 para aluno e 2 para Personal")
-                if escolha == "1":
-                    texto = "INSERT INTO CADASTRO_ALUNO (Comprovante,ID_GROUP,CPF) Values ('{}',{},'{}')".format("FEITO",iddogrupo,cpf_aluno)
-                    print(texto)
-                    conectarnobanco(texto,host,user,password,1)
-                if escolha == "2":
-                    formacao = input("Digite a formação do Personal: ")
-                    estadocivil = input("Digite o estado civil 'S', 'C', 'D', 'V'")
-                    texto = "INSERT INTO CADASTRO_PERSONAL (CPF,id_ACADEMIA,Formacao,estadocivil,Comprovante) Values ('{}',{},'{}','{}','Feito')".format(cpf_aluno,iddaacademia,formacao,estadocivil)
-                    print(texto)
-                    conectarnobanco(texto,host,user,password,1)
-
-
-
-            if escolher == "2":
-                texto = "SELECT * FROM academia.Pessoa"
-                linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
-
-                texto = "SELECT * FROM academia.CADASTRO_ALUNO"
-                linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
-
-                texto = "SELECT * FROM academia.CADASTRO_PERSONAL"
-                linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
-
-                texto = """
-            
-
-
-SELECT Nome_Pessoa,NomeAcademia,Comprovante,Formacao 
-FROM academia.CADASTRO_PERSONAL 
-INNER JOIN academia.ACADEMIA
-INNER JOIN academia.Pessoa
-ON id_ACADEMIA = ACADEMIA.id_ACADEMIA
-ON CADASTRO_PERSONAL.CPF = Pessoa.CPF
-
-
-"""
-                linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
-            if menu == "3":
-                cpf_aluno = input("Digite o cpf da pessoa: ")
-                while cpf.validate(cpf_aluno) == False:
-                    print("Opa, digita o CPF certinho ai amigão :D")
-                    cpf_aluno = input("Digite o cpf da pessoa: ")
-
-                saiu_entrou = input("Ele saiu ou entrou?\n1- Entrou\n2-Saiu")
-
-                texto = """
-                 select lotacao,quantidadeAlunos from ACADEMIA
-                    WHERE NomeAcademia='{}';
-                """.format(academia)
-                linha = conectarnobanco(texto,host,user,password,0)
-                print(linha)
-                lotacao_academia = int(linha[0][0])
-                quantidadeAlunos_academia = int(linha[0][1])
-
-                if saiu_entrou == "1":
-
-                    if int(lotacao_academia) == int(quantidadeAlunos_academia):
-                        print("ACADEMIA LOTADA NÃO ENTRA MAIS, LOTOU LOTOU")
-                        data_fila = data()
-                        data_fila = data_fila.strftime("%Y-%m-%d %H:%M:%S")
-
-
-                        texto = """
-                          SELECT max(Posicao)
-                        FROM FILA_ESPERA
-                        WHERE id_ACADEMIA ={} and saiu = 'F';
-                         
-                        """.format(i[0])
-                        linha = conectarnobanco(texto,host,user,password,0)
-                        print(linha)
-                        try:
-                            posicao = int(linha[0][0]) + 1
-                        except:
-                            posicao = 1
-
-                        texto = """
-                        INSERT INTO FILA_ESPERA
-                        (Horario, id_ACADEMIA, saiu, Posicao, CPF)
-                        VALUES('{}', {}, '{}', {}, '{}');
-                        """.format(data_fila,i[0],'N',posicao,cpf_aluno)
-                        linha = conectarnobanco(texto,host,user,password,1)
-
-                        
-                    else:
-
-                        texto = """
-                        UPDATE ACADEMIA
-                        set quantidadeAlunos={}
-                        WHERE NomeAcademia='{}';
-
-                        """.format(quantidadeAlunos_academia + 1,i[0])
-                        print(texto)
-                        linha = conectarnobanco(texto,host,user,password,1)
-
-                        
-                    
+                for i in linha:
+                        if i[2] == academia:
+                            vetoracademia = i
+                if vetoracademia != []:
+                    print("Academia existe :D")
+           
                 else:
-                        texto = """
-                        SELECT ID_FILA_ESPERA,Posicao
-                        FROM FILA_ESPERA
-                        WHERE id_ACADEMIA ={} and saiu = 'N';
-                         
-                        """.format(i[0])
-                        linha = conectarnobanco(texto,host,user,password,0)
-                        print(linha)
-                        try:
-                            posicao = int(linha[0][1])
-                        except:
-                            posicao = -1
-                        if int(lotacao_academia) == int(quantidadeAlunos_academia):
-                            if posicao == -1:
-                                texto = """
-                                UPDATE ACADEMIA
-                                set quantidadeAlunos={}
-                                WHERE NomeAcademia='{}';
-
-                                """.format(quantidadeAlunos_academia - 1,i[2])
-                                print(texto)
-                                linha = conectarnobanco(texto,host,user,password,1)
-                            else:
-                                print(linha)
-                                print(linha[0])
-                                id_fila = int(linha[0][0])
-
-                                texto = """
-                                UPDATE academia.FILA_ESPERA
-                                SET saiu='S'
-                                WHERE ID_FILA_ESPERA={};
-                                """.format(id_fila)
-                                linha = conectarnobanco(texto,host,user,password,1)
-
-
-
-
-
+                    print("Academia não existe")
                     
-                        print("OPA")
+                
+
+
+
+
+                print("O que você deseja fazer?")
+                print("1- Cadastrar Pessoa ou Personal")
+                print("2- Ver Pessoas")
+                print("3- Organizar a fila")
+        
+
+        
+                escolher = input("O que você deseja fazer?")
+                if escolher == "1":
+                    cpf_aluno = input("Digite o cpf da pessoa: ")
+                    while cpf.validate(cpf_aluno) == False:
+                        print("Opa, digita o CPF certinho ai amigão :D")
+                        cpf_aluno = input("Digite o cpf do pessoa: ")
+
+                    nome_aluno = input("Digite o nome do pessoa: ")
+                    data_aluno = input("Digite a data de nascimento do pessoa(formato: AAAA-MM-DD): ")
+                    celular_aluno = input("Digite o  numero de celular do pessoa: ")
+                    tipo_sanguineo_aluno = input("Digite o tipo sanguineo do pessoa: ")
+
+                    texto = "INSERT INTO Pessoa (CPF,Nome_Pessoa,Data_Nascimento,Numero_Celular,Tipo_Sanguineo) Values ('{}','{}','{}','{}','{}')".format(cpf_aluno,nome_aluno,data_aluno,celular_aluno,tipo_sanguineo_aluno)
+            
+                    conectarnobanco(texto,host,user,password,1)
+
+
+
+                    texto = "SELECT ID_GROUP FROM academia.ACADEMIA WHERE  NomeAcademia = '" + str(academia) + "'"
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    iddogrupo = pegarId(linha)
+
+
+                    texto = "SELECT id_ACADEMIA FROM academia.ACADEMIA WHERE  NomeAcademia = '" + str(academia) + "'"
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    iddaacademia = pegarId(linha)
+
+
+                    escolha = input("Aluno ou personal? 1 para aluno e 2 para Personal")
+                    if escolha == "1":
+                        texto = "INSERT INTO CADASTRO_ALUNO (Comprovante,ID_GROUP,CPF) Values ('{}',{},'{}')".format("FEITO",iddogrupo,cpf_aluno)
+                        conectarnobanco(texto,host,user,password,1)
+                    if escolha == "2":
+                        formacao = input("Digite a formação do Personal: ")
+                        estadocivil = input("Digite o estado civil 'S', 'C', 'D', 'V'")
+                        texto = "INSERT INTO CADASTRO_PERSONAL (CPF,id_ACADEMIA,Formacao,estadocivil,Comprovante) Values ('{}',{},'{}','{}','Feito')".format(cpf_aluno,iddaacademia,formacao,estadocivil)
+                        conectarnobanco(texto,host,user,password,1)
+
+
+
+                if escolher == "2":
+                    texto = "SELECT * FROM academia.Pessoa"
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    print(linha)
+
+                    texto = "SELECT * FROM academia.CADASTRO_ALUNO"
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    print(linha)
+
+                    texto = "SELECT * FROM academia.CADASTRO_PERSONAL"
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    print(linha)
+
+                    texto = """
+                
+
+
+    SELECT Nome_Pessoa,NomeAcademia,Comprovante,Formacao 
+    FROM academia.CADASTRO_PERSONAL 
+    INNER JOIN academia.ACADEMIA
+    INNER JOIN academia.Pessoa
+    ON id_ACADEMIA = ACADEMIA.id_ACADEMIA
+    ON CADASTRO_PERSONAL.CPF = Pessoa.CPF
+
+
+    """
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    print(linha)
+                if menu == "3":
+                    cpf_aluno = input("Digite o cpf da pessoa: ")
+                    while cpf.validate(cpf_aluno) == False:
+                        print("Opa, digita o CPF certinho ai amigão :D")
+                        cpf_aluno = input("Digite o cpf da pessoa: ")
+
+                    saiu_entrou = input("Ele saiu ou entrou?\n1- Entrou\n2-Saiu")
+
+                    texto = """
+                    select lotacao,quantidadeAlunos from ACADEMIA
+                        WHERE NomeAcademia='{}';
+                    """.format(academia)
+                    linha = conectarnobanco(texto,host,user,password,0)
+                    print(linha)
+                    lotacao_academia = int(linha[0][0])
+                    quantidadeAlunos_academia = int(linha[0][1])
+
+                    if saiu_entrou == "1":
+
+                        if int(lotacao_academia) == int(quantidadeAlunos_academia):
+                            print("ACADEMIA LOTADA NÃO ENTRA MAIS, LOTOU LOTOU")
+                            data_fila = data()
+                            data_fila = data_fila.strftime("%Y-%m-%d %H:%M:%S")
+
+
+                            texto = """
+                            SELECT max(Posicao)
+                            FROM FILA_ESPERA
+                            WHERE id_ACADEMIA ={} and saiu = 'F';
+                            
+                            """.format(i[0])
+                            linha = conectarnobanco(texto,host,user,password,0)
+                            print(linha)
+                            try:
+                                posicao = int(linha[0][0]) + 1
+                            except:
+                                posicao = 1
+
+                            texto = """
+                            INSERT INTO FILA_ESPERA
+                            (Horario, id_ACADEMIA, saiu, Posicao, CPF)
+                            VALUES('{}', {}, '{}', {}, '{}');
+                            """.format(data_fila,i[0],'N',posicao,cpf_aluno)
+                            linha = conectarnobanco(texto,host,user,password,1)
+
+
+                        else:
+
+                            texto = """
+                            UPDATE ACADEMIA
+                            set quantidadeAlunos={}
+                            WHERE id_ACADEMIA='{}';
+                            """.format(quantidadeAlunos_academia + 1,i[0])
+                            linha = conectarnobanco(texto,host,user,password,1)
+
+
+
+                    else:
+                            texto = """
+                            SELECT ID_FILA_ESPERA,Posicao
+                            FROM FILA_ESPERA
+                            WHERE id_ACADEMIA ={} and saiu = 'N';
+                            
+                            """.format(i[0])
+                            linha = conectarnobanco(texto,host,user,password,0)
+                            print(linha)
+                            try:
+                                posicao = int(linha[0][1])
+                            except:
+                                posicao = -1
+                            if int(lotacao_academia) == int(quantidadeAlunos_academia):
+                                if posicao == -1:
+                                    texto = """
+                                    UPDATE ACADEMIA
+                                    set quantidadeAlunos={}
+                                    WHERE NomeAcademia='{}';
+                                    """.format(quantidadeAlunos_academia - 1,i[2])
+                                    linha = conectarnobanco(texto,host,user,password,1)
+                                else:
+                                    print(linha)
+                                    print(linha[0])
+                                    id_fila = int(linha[0][0])
+
+                                    texto = """
+                                    UPDATE academia.FILA_ESPERA
+                                    SET saiu='S'
+                                    WHERE ID_FILA_ESPERA={};
+                                    """.format(id_fila)
+                                    linha = conectarnobanco(texto,host,user,password,1)
+
+
+
+
+
+                    continuar = input("Digite 'S' para continuar: ")
+                    print("OPA")
         if menu == "4":
             print("Painel do Personal Trainer" + "-" * 10 )
             cpf_personal = input("Digite aqui o seu cpf aqui")
