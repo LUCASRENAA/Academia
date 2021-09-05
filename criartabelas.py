@@ -107,10 +107,11 @@ def criarTabelas(host,user,password):
         ID_FILA_ESPERA int NOT NULL AUTO_INCREMENT,
       Horario DATETIME,
           id_ACADEMIA int,
-            
+          saiu char(1) CHECK (saiu IN ('S', 'N','F') ),
+
         
           
-          Posicao int,
+          Posicao int NOT NULL AUTO_INCREMENT,
           CPF VARCHAR(11),
               FOREIGN KEY (CPF) REFERENCES Pessoa(CPF),
 
