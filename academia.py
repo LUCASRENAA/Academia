@@ -218,15 +218,23 @@ while menu != "5":
                 if escolher == "2":
                     texto = "SELECT * FROM academia.Pessoa"
                     linha = conectarnobanco(texto,host,user,password,0)
-                    print(linha)
-
+                    for pessoa in linha:
+                        print("CPF: {}\nNome: {}".format(pessoa[0],pessoa[1]))
+                    
+                    """
                     texto = "SELECT * FROM academia.CADASTRO_ALUNO"
                     linha = conectarnobanco(texto,host,user,password,0)
-                    print(linha)
+                    for pessoa in linha:
+                        print("CPF: {}\nNome: {}".format(pessoa[0],pessoa[1]))
 
                     texto = "SELECT * FROM academia.CADASTRO_PERSONAL"
                     linha = conectarnobanco(texto,host,user,password,0)
                     print(linha)
+
+                    for pessoa in linha:
+                        #print("CPF: {}\nNome: {}".format(pessoa[0],pessoa[1]))
+                        pass
+                    """
 
                     texto = """
                 
@@ -242,7 +250,7 @@ while menu != "5":
 
     """
                     linha = conectarnobanco(texto,host,user,password,0)
-                    print(linha)
+                    #print(linha)
                 if menu == "3":
                     cpf_aluno = input("Digite o cpf da pessoa: ")
                     while cpf.validate(cpf_aluno) == False:
@@ -409,7 +417,40 @@ while menu != "5":
 
                         texto = "INSERT INTO EXERCICIOS_LIGACAO (Serie,Repeticao,Intervalo,ID,ID_EXERCICIOS) Values ('{}',{},{},{},{})".format(serie,repeticao,intervalo,id_lista,id_exercicio)
                         conectarnobanco(texto,host,user,password,1)
+            if opcao_personal == "2":
+                cpf_aluno = input("Digite o cpf da pessoa: ")
+                while cpf.validate(cpf_aluno) == False:
+                        print("Opa, digita o CPF certinho ai amigão :D")
+                        cpf_aluno = input("Digite o cpf do pessoa: ")
 
+                texto = """
+
+select max(ID) from LISTA_EXERCICIOS
+where CPF_ALUNO ="{}"
+                """.format(cpf_aluno)
+                linha = conectarnobanco(texto,host,user,password,0)
+                id_lista = pegarId(linha)
+
+
+
+                
+                texto = """
+
+                SELECT CPF_ALUNO,Nome,Tipo,Serie,Repeticao,Intervalo
+FROM academia.EXERCICIOS_LIGACAO
+inner join academia.EXERCICIOS
+ON EXERCICIOS_LIGACAO.ID_EXERCICIOS = EXERCICIOS.ID_EXERCICIOS
+inner join academia.LISTA_EXERCICIOS
+ON EXERCICIOS_LIGACAO.ID = LISTA_EXERCICIOS.ID
+WHERE LISTA_EXERCICIOS.ID = {} and CPF_ALUNO = "{}"
+                """.format(id_lista,cpf_aluno)
+                linha = conectarnobanco(texto,host,user,password,0)
+                print("-" * 20)
+
+                for valores in linha:
+
+                    print("Exercicio: {} \nTipo: {} \nSerie: {} \nRepetição: {} \nIntervalo: {}".format(valores[1],valores[2],valores[3],valores[4],valores[5]))
+                    print("-" * 20)
 
 
 
